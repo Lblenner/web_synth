@@ -1,0 +1,6 @@
+services:
+  synth_web:
+    build: .
+    restart: always
+    ports:
+      - "3002:3000"

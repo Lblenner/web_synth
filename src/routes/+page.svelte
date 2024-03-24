@@ -2,6 +2,12 @@
   import { onMount } from "svelte";
   import * as Tone from "tone";
 
+  let noteFreq = [
+    261.6, 277.1, 293.6, 311.1, 329.6, 349.2, 369.9, 391.9, 415.3, 440, 466.1,
+    493.8,
+  ];
+  let heights: number[] = [];
+
   let synths: Tone.Synth[] = [];
   let managedTouches = new Map();
   let w: undefined | number, h: undefined | number;
@@ -9,6 +15,14 @@
   let load = false;
 
   onMount(() => {
+    if (h) {
+      for (let f of noteFreq) {
+        heights.push(Math.round(h * ((f - 70) / 530)));
+      }
+      console.log(heights);
+      heights = heights;
+    }
+
     return () => {
       synths.forEach((s) => s.dispose());
     };
@@ -139,6 +153,9 @@
   ) => {
     if (h && w) {
       let f = (y / h) * 530 + 70;
+
+      // let un = (1/h)*530
+
       let ratio = x / w;
       let type;
 
@@ -164,6 +181,12 @@
 <div>
   <div class="absolute w-full h-screen gradient1"></div>
   <div class="absolute w-full h-screen gradient2"></div>
+  {#each heights as h}
+    <div
+      class="absolute w-full h-1 my-1  border-x-[16px] border-red-600"
+      style="margin-top: {h}px;"
+    ></div>
+  {/each}
   <div
     class="absolute w-full h-screen pointer-events-none flex justify-center items-center flex-col"
   >
@@ -185,6 +208,7 @@
       {/each}
     </div>
   </div>
+
   <canvas
     bind:clientWidth={w}
     bind:clientHeight={h}
